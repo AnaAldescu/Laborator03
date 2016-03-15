@@ -4,15 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.SyncStateContract.Constants;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 
 public class PhoneDialerActivity extends Activity {
+	final static int CONTACTS_MANAGER_REQUEST_CODE = 10;
+	final static String phone_error = "Phone Error";
 	
 	private class ButtonClick implements View.OnClickListener {
 
@@ -47,6 +51,7 @@ public class PhoneDialerActivity extends Activity {
         ImageButton backspace = (ImageButton) findViewById(R.id.imageButton1);
         ImageButton call = (ImageButton) findViewById(R.id.imageButton2);
         ImageButton hangup = (ImageButton) findViewById(R.id.imageButton3);
+        ImageButton addContact = (ImageButton) findViewById(R.id.imageButton4);
         
         backspace.setOnClickListener(new View.OnClickListener() {
 			
@@ -66,7 +71,7 @@ public class PhoneDialerActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				EditText editText = (EditText) findViewById(R.id.editTextNumber);
-				String phoneNumber = editText.toString();
+				String phoneNumber = editText.getText().toString();
 				
 				Intent intent = new Intent(Intent.ACTION_CALL);
 					
@@ -80,6 +85,24 @@ public class PhoneDialerActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				finish();
+			}
+		});
+        
+        addContact.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				EditText editText = (EditText) findViewById(R.id.editTextNumber);
+				String phoneNumber = editText.getText().toString();
+				
+				if (phoneNumber.length() > 0) {
+					Intent intent = new Intent("ro.pub.cs.systems.pdsd.lab04.contactsmanager.intent.action.ContactsManagerActivity");
+					  
+					intent.putExtra("ro.pub.cs.systems.pdsd.lab04.contactsmanager.PHONE_NUMBER_KEY", phoneNumber);
+					startActivityForResult(intent, CONTACTS_MANAGER_REQUEST_CODE);
+				} else {
+					Toast.makeText(getApplication(), phone_error, Toast.LENGTH_LONG).show();
+				}
 			}
 		});
     }
